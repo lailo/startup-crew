@@ -1,0 +1,30 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - $OLLAMA_PORTL:11434
+    volumes:
+      - ollama:/root/.ollama
+    container_name: ollama
+    tty: true
+    restart: unless-stopped
+    env_file:
+      - .env
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+    depends_on:
+      - ollama
+    ports:
+      - $WEBUI_PORT:8080
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+    env_file:
+      - .env
+
+volumes:
+  ollama: {}
+  open-webui: {}
